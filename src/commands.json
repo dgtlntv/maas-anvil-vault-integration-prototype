@@ -115,10 +115,11 @@
                                         [
                                             "localhost-localhost",
                                             "admin/test.vault-offer",
-                                            "Vault secures, stores, and tightly controls secrets vault-kv provider access to tokens, passwords, certificates, API keys, and other secrets in modern computing. Vault handles leasing, key revocation, ke...",
+                                            "Vault secures, stores, and tightly controls secrets.",
                                             "secrets",
                                             "vault-kv",
-                                            "provider"
+                                            "provider",
+                                            "admin"
                                         ]
                                     ],
                                     "format": "table"

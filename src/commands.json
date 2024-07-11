@@ -16,7 +16,51 @@
             "subcommands": {
                 "cluster": {
                     "description": "Manage the MAAS Cluster",
-                    "action": "This command is not part of this prototype"
+                    "subcommands": {
+                        "join": {
+                            "description": "Join node to the cluster.",
+                            "flags": {
+                                "--role": {
+                                    "type": "string",
+                                    "aliases": ["-r"],
+                                    "description": "Specify which roles the node will be assigned in the cluster.",
+                                    "required": true
+                                },
+                                "--token": {
+                                    "type": "string",
+                                    "description": "Join token",
+                                    "required": true
+                                },
+                                "--accept-defaults": {
+                                    "type": "string",
+                                    "aliases": ["-a"],
+                                    "description": " Accept all defaults."
+                                }
+                            },
+                            "action": [
+                                {
+                                    "if": "flags['--role'] === 'vault'",
+                                    "then": [
+                                        {
+                                            "type": "spinner",
+                                            "texts": [
+                                                "Adding node to Sunbeam cluster ...",
+                                                "Registering machine user using token ...",
+                                                "Adding machine to Juju model ...",
+                                                "Initializing Terraform from provider mirror ...",
+                                                "Deploying Vault ...",
+                                                "Adding Vault unit to machine ..."
+                                            ],
+
+                                            "duration": 10000
+                                        },
+                                        "Node joined cluster with roles: vault"
+                                    ],
+                                    "else": "This prototype doesn't allow 'joining' with roles other than vault."
+                                }
+                            ]
+                        }
+                    }
                 },
                 "inspect": {
                     "description": "Inspect the maas-anvil installation.",

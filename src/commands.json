@@ -4,6 +4,7 @@
     },
     "globalVariables": {
         "isVaultDeployed": "false",
+        "isOfferMade": "false",
         "isVaultEnabled": "false",
         "isSnapDaemonSet": "false",
         "joinNodeName": "",
@@ -15,158 +16,7 @@
             "subcommands": {
                 "cluster": {
                     "description": "Manage the MAAS Cluster",
-                    "subcommands": {
-                        "add": {
-                            "description": "Generate a token for a new node to join the cluster.",
-                            "flags": {
-                                "--name": {
-                                    "type": "string",
-                                    "description": "Fully qualified node name",
-                                    "required": true
-                                }
-                            },
-                            "action": [
-                                {
-                                    "if": "globalVariables.isBootstrapped === 'true'",
-                                    "then": [
-                                        {
-                                            "setVariable": "joinNodeName",
-                                            "value": "{{flags['--name']}}"
-                                        },
-                                        {
-                                            "type": "spinner",
-                                            "texts": [
-                                                "Authenticating with Juju controller ...",
-                                                "Creating user for machine in Juju ..."
-                                            ],
-
-                                            "duration": 1000
-                                        },
-                                        "Token for the Node {{flags['--name']}}:\nexample-token"
-                                    ],
-                                    "else": "You need to bootstrap the cluster first."
-                                }
-                            ]
-                        },
-                        "bootstrap": {
-                            "description": "Initialize the MAAS cluster.",
-                            "flags": {
-                                "--role": {
-                                    "type": "string",
-                                    "aliases": ["-r"],
-                                    "description": "Specify additional roles, region or agent, for the bootstrap node. Defaults to the database role."
-                                },
-                                "--manifest": {
-                                    "type": "string",
-                                    "aliases": ["-m"],
-                                    "description": "Manifest file."
-                                },
-                                "--accept-defaults": {
-                                    "type": "boolean",
-                                    "aliases": ["-a"],
-                                    "description": " Accept all defaults."
-                                }
-                            },
-                            "action": [
-                                {
-                                    "setVariable": "isBootstrapped",
-                                    "value": "true"
-                                },
-                                {
-                                    "type": "spinner",
-                                    "texts": [
-                                        "Authenticating with Juju controller ...",
-                                        "Adding cloud to Juju client ...",
-                                        "Bootstrapping Juju onto machine ...",
-                                        "Initializing Terraform from provider mirror ...",
-                                        "Deploying HAProxy ...",
-                                        "Adding HAProxy unit to machine ...",
-                                        "Initializing Terraform from provider mirror ...",
-                                        "Deploying MAAS Region ...",
-                                        "Adding MAAS Region unit to machine ...",
-                                        "Initializing Terraform from provider mirror ...",
-                                        "Deploying MAAS Agent ...",
-                                        "Adding MAAS Agent unit to machine ...",
-                                        "Initializing Terraform from provider mirror ...",
-                                        "Deploying Vault ...",
-                                        "Adding Vault unit to machine ..."
-                                    ],
-
-                                    "duration": 40000
-                                },
-                                "Node has been bootstrapped with roles: database, region, agent, haproxy, vault"
-                            ]
-                        },
-                        "join": {
-                            "description": "Join node to the cluster.",
-                            "flags": {
-                                "--role": {
-                                    "type": "string",
-                                    "aliases": ["-r"],
-                                    "description": "Specify which roles the node will be assigned in the cluster."
-                                },
-                                "--token": {
-                                    "type": "string",
-                                    "description": "Join token",
-                                    "required": true
-                                },
-                                "--accept-defaults": {
-                                    "type": "string",
-                                    "aliases": ["-a"],
-                                    "description": " Accept all defaults."
-                                }
-                            },
-                            "action": [
-                                {
-                                    "type": "spinner",
-                                    "texts": [
-                                        "Adding node to Sunbeam cluster ...",
-                                        "Registering machine user {{globalVariables.joinNodeName}} using token ...",
-                                        "Adding machine to Juju model ...",
-                                        "Initializing Terraform from provider mirror ...",
-                                        "Deploying PostgreSQL ...",
-                                        "Adding PostgreSQL unit to machine ...",
-                                        "Initializing Terraform from provider mirror ...",
-                                        "Deploying HAProxy ...",
-                                        "Adding HAProxy unit to machine ...",
-                                        "Initializing Terraform from provider mirror ...",
-                                        "Deploying MAAS Region ...",
-                                        "Adding MAAS Region unit to machine ...",
-                                        "Initializing Terraform from provider mirror ...",
-                                        "Deploying MAAS Agent ...",
-                                        "Adding MAAS Agent unit to machine ...",
-                                        "Initializing Terraform from provider mirror ...",
-                                        "Deploying Vault ...",
-                                        "Adding Vault unit to machine ..."
-                                    ],
-
-                                    "duration": 40000
-                                },
-                                "Node joined cluster with roles: database, region, agent, haproxy, vault"
-                            ]
-                        },
-                        "list": {
-                            "description": "List nodes in the cluster.",
-                            "flags": {
-                                "--format": {
-                                    "type": "string",
-                                    "aliases": ["-f"],
-                                    "description": "Output format."
-                                }
-                            },
-                            "action": [
-                                {
-                                    "data": [
-                                        ["Node", "Status", "Region", "Agent", "Database", "HAProxy"],
-                                        ["infra1", "up", "x", "x", "x", "x"],
-                                        ["infra2", "up", "x", "x", "x", "x"],
-                                        ["infra3", "up", "x", "x", "x", "x"]
-                                    ],
-                                    "format": "table"
-                                }
-                            ]
-                        }
-                    }
+                    "action": "This command is not part of this prototype"
                 },
                 "inspect": {
                     "description": "Inspect the maas-anvil installation.",
@@ -178,48 +28,7 @@
                 },
                 "prepare-node-script": {
                     "description": "Generate script to prepare a node for Anvil use.",
-                    "action": [
-                        {
-                            "text": "++ lsb_release -sc\n+ '[' jammy '!=' jammy ']'\n++ whoami\n+ USER=ubuntu\n++ id -u",
-                            "delay": 100
-                        },
-                        {
-                            "text": "+ '[' 1000 -eq 0 -o ubuntu = root ']\n+ SUDO_ASKPASS=/bin/false\n+ sudo -A whoami\n+ sudo grep -r ubuntu /etc/sudoers /etc/sudoers.d\n+ grep NOPASSWD:ALL",
-                            "delay": 100
-                        },
-                        {
-                            "text": "+ dpkg -s openssh-server\n+ sudo snap connect maas-anvil:ssh-keys\n+ sudo addgroup ubuntu snap_daemon\nAdding user `ubuntu' to group `snap_daemon' ...\nAdding user ubuntu to group snap_daemon",
-                            "delay": 100
-                        },
-                        {
-                            "text": "Done.\n+ '[' -f /home/ubuntu/.ssh/id_rsa ']'\n+ ssh-keygen -b 4096 -f /home/ubuntu/.ssh/id_rsa -t rsa -N ''\nGenerating public/private rsa key pair.\nYour identification has been saved in /home/ubuntu/.ssh/id_rsa",
-                            "delay": 100
-                        },
-                        {
-                            "text": "Your public key has been saved in /home/ubuntu/.ssh/id_rsa.pub\nThe key fingerprint is:\nSHA256:VN1zDgkihF3D2wF83UP2vk+ar3j65+7tF1OfIw3+aCU ubuntu@anvil1\nThe key's randomart image is:",
-                            "delay": 100
-                        },
-                        {
-                            "text": "+---[RSA 4096]----+\n|       +o+*o.+.= |\n|      . .ooo+ B.+|\n|        .  + . =o|\n|       .  . .. .o|\n|        S   . o =|\n|             E Bo|\n|              *.=|\n|             +.==|\n|            ++=OX|\n+----[SHA256]-----+",
-                            "delay": 100
-                        },
-                        {
-                            "text": "+ cat /home/ubuntu/.ssh/id_rsa.pub\n++ hostname --all-ip-addresses\n+ ssh-keyscan -H 10.54.236.238 192.168.1.195 \nfd42:f6d7:a67c:f870:5054:ff:fec6:c08a fd1f:7d2:6b56:2344:5054:ff:febf:f423\n192.168.1.195: Connection closed by remote host\nfd1f:7d2:6b56:2344:5054:ff:febf:f423: Connection closed by remote host\n# 10.54.236.238:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# 10.54.236.238:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# 10.54.236.238:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# 192.168.1.195:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# 192.168.1.195:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10",
-                            "delay": 100
-                        },
-                        {
-                            "text": "# fd42:f6d7:a67c:f870:5054:ff:fec6:c08a:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# fd42:f6d7:a67c:f870:5054:ff:fec6:c08a:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# fd42:f6d7:a67c:f870:5054:ff:fec6:c08a:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# fd42:f6d7:a67c:f870:5054:ff:fec6:c08a:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# fd1f:7d2:6b56:2344:5054:ff:febf:f423:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# fd1f:7d2:6b56:2344:5054:ff:febf:f423:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# 10.54.236.238:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n## 10.54.236.238:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# 192.168.1.195:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# 192.168.1.195:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# fd42:f6d7:a67c:f870:5054:ff:fec6:c08a:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10",
-                            "delay": 100
-                        },
-                        {
-                            "text": "# fd1f:7d2:6b56:2344:5054:ff:febf:f423:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n# fd1f:7d2:6b56:2344:5054:ff:febf:f423:22 SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\n+ sudo snap install --channel 3.4/stable juju",
-                            "delay": 5000
-                        },
-                        {
-                            "text": "juju (3.4/stable) 3.4.4 from Canonical✓ installed\n+ mkdir -p /home/ubuntu/.local/share\n+ mkdir -p /home/ubuntu/.config/anvil\n+ sudo snap connect maas-anvil:juju-bin juju:juju-bin\n+ sudo snap connect maas-anvil:dot-local-share-juju\n+ sudo snap connect maas-anvil:dot-config-anvil",
-                            "delay": 100
-                        }
-                    ]
+                    "action": "This command is not part of this prototype"
                 },
                 "enable": {
                     "description": "Enable plugins for MAAS Anvil to use.",
@@ -262,9 +71,9 @@
                                     "setVariable": "isVaultDeployed",
                                     "value": "true"
                                 },
-                                "Vault is being deployed."
+                                "Deployed 'vault' from charm-hub charm 'vault', revision 351 in channel 1.8/stable on ubuntu@22.04/stable"
                             ],
-                            "else": "Unknown charm {{args[0]}}."
+                            "else": "This prototype doesn't allow 'deploying' charms other than vault."
                         }
                     ]
                 },
@@ -272,40 +81,53 @@
                     "description": "Relate two charms.",
                     "action": [
                         {
-                            "if": "globalVariables.isVaultEnabled === 'true' && globalVariables.isVaultDeployed === 'true' && args[0] === 'vault:secrets' && args[1] === 'maas-anvil:secrets'",
+                            "if": "globalVariables.isVaultEnabled === 'true' && globalVariables.isVaultDeployed === 'true' && args[0] === 'maas-region:vault' && args[1] === 'admin/test.vault-offer'",
                             "then": "Successfully related vault secrets with MAAS Anvil secrets.",
                             "else": "Unable to relate."
                         }
                     ]
                 },
-                "run": {
-                    "description": "Run a command on a deployed charm.",
+                "offer": {
+                    "description": "Creating an offer so it is available to the Anvil Juju model",
                     "action": [
                         {
-                            "text": "Running operation 3 with 1 task\r\n\n - task 4 on unit-maas-region-0\r\n\n\nWaiting for task 4...\r\n\n",
-                            "delay": 2000
-                        },
-                        "info: user admin successfully created"
+                            "if": "args[0] === 'vault:secrets' && args[1] === 'vault-offer'",
+                            "then": [
+                                {
+                                    "setVariable": "isOfferMade",
+                                    "value": "true"
+                                },
+                                "Application 'vault' endpoints [secrets] available at 'admin/test.vault-offer'"
+                            ],
+                            "else": "This prototype only allows for creating an offer for vault:secrets with the name vault-offer."
+                        }
+                    ]
+                },
+                "show-offer": {
+                    "description": "Show all available offers",
+                    "action": [
+                        {
+                            "if": "globalVariables.isOfferMade === 'true'",
+                            "then": [
+                                {
+                                    "data": [
+                                        ["Store", "URL", "Access", "Description", "Endpoint", "Interface", "Role"],
+                                        [
+                                            "localhost-localhost",
+                                            "admin/test.vault-offer",
+                                            "Vault secures, stores, and tightly controls secrets vault-kv provider access to tokens, passwords, certificates, API keys, and other secrets in modern computing. Vault handles leasing, key revocation, ke...",
+                                            "secrets",
+                                            "vault-kv",
+                                            "provider"
+                                        ]
+                                    ],
+                                    "format": "table"
+                                }
+                            ],
+                            "else": "No available offers."
+                        }
                     ]
                 }
-            }
-        },
-        "newgrp": {
-            "description": "Add user to a group",
-            "args": [
-                {
-                    "name": "groupname",
-                    "description": "The group to add to."
-                }
-            ],
-            "action": {
-                "if": "args[0] === 'snap_daemon'",
-                "then": [
-                    {
-                        "setVariable": "isSnapDaemonSet",
-                        "value": "true"
-                    }
-                ]
             }
         }
     }

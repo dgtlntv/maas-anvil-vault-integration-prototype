@@ -125,7 +125,7 @@
                     "description": "Relate two charms.",
                     "action": [
                         {
-                            "if": "globalVariables.isVaultEnabled === 'true' && globalVariables.isVaultDeployed === 'true' && args[0] === 'maas-region:vault' && args[1] === 'admin/test.vault-offer'",
+                            "if": "globalVariables.isVaultDeployed === 'true' && args[0] === 'maas-region:vault' && args[1] === 'admin/test.vault-offer'",
                             "then": "Successfully related vault secrets with MAAS Anvil secrets.",
                             "else": "Unable to relate."
                         }
